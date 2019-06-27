@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: {{ app.name }}-pipeline
+  annotations:
+    pipeline.alpha.openshift.io/uses: '[{"name": "{{ app.name }}", "namespace": "{{ namespace }}", "kind": "DeploymentConfig"}]'
+  labels:
+    app: {{ app.name }}
+    namespace: {{ namespace }}
+spec:
+  runPolicy: Serial
+  source:
+    git:
+      ref: {{ git.ref }}
+      uri: >-
+        {{ git.url }}
+    sourceSecret:
+      name: git-credentials
+    type: Git
+  strategy:
+    jenkinsPipelineStrategy:
+      jenkinsfile: >
+        pipeline {
+          agent { node { label 'maven' } }
+          stages {
+            stage('Fetch Source') {
+              steps {
+                git url: '{{ git.url }}', branch: '{{ git.ref }}'
+              }
+            }
+            
+            stage('Unit Testing') {
+              steps {
+                sh("./mvnw clean test")
+              }
+            }
+            
+            stage('Build Image') {
+              steps {
+                openshiftBuild(namespace: '{{ namespace }}', bldCfg: '{{ app.name }}', showBuildLogs: 'true')
+              }
+            }
+            
+            stage('Deploy') {
+              steps {
+                openshiftDeploy(namespace: '{{ namespace }}', depCfg: '{{ app.name }}')
+              }
+            }
+          }
+        }
+    type: JenkinsPipeline
+  triggers:
+    - github:
+        secretReference:
+          name: github
+      type: GitHub

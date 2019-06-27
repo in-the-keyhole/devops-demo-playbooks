@@ -1,0 +1,30 @@
+---
+- name: Create image stream
+  include_tasks: apply-template.yaml
+  vars:
+    template: image-stream
+
+- name: Create build config
+  include_tasks: apply-template.yaml
+  vars:
+    template: build-config
+
+- name: Create deployment config
+  include_tasks: apply-template.yaml
+  vars:
+    template: deployment-config
+
+- name: Create service
+  include_tasks: apply-template.yaml
+  vars:
+    template: service
+
+- name: Create route
+  include_tasks: apply-template.yaml
+  vars:
+    template: route
+
+- name: Create pipeline
+  include_tasks: apply-template.yaml
+  vars:
+    template: pipeline

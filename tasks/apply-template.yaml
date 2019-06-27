@@ -1,0 +1,8 @@
+- name: Create {{ app.name }} {{ template }} yaml from template
+  template:
+    src: "{{ template }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ template }}.yaml"
+  changed_when: no
+
+- name: Provision {{ app.name }} {{ template }}
+  command: oc apply -f {{ mktemp.stdout }}/{{ template }}.yaml -n {{ namespace }}

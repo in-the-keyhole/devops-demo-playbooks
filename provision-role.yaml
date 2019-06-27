@@ -1,0 +1,30 @@
+- name: OpenShift - Provision by "role"
+  hosts: localhost
+  run_once: true
+
+  pre_tasks:
+    - include_vars: main.yaml
+
+    - name: Login to OpenShift
+      action: command oc login -u {{ openshift.username }} -p {{ openshift.password }} {{ openshift.hostname }}
+
+    - name: Create temp directory for storing templates
+      command: mktemp -d ./ansible-XXXXXX
+      register: mktemp
+      changed_when: false
+      check_mode: no
+
+  tasks:
+    - include_role: 
+        name: "{{ role }}"
+
+  post_tasks:
+    - name: Delete temp directory
+      file:
+        name: "{{ mktemp.stdout }}"
+        state: absent
+      changed_when: false
+      check_mode: no
+
+    - name: Logout of OpenShift
+      action: command oc logout
