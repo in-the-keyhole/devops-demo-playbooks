@@ -1,4 +1,2 @@
 openshift:
   hostname: https://192.168.64.17:8443
-  username: developer
-  password: developer
