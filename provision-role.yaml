@@ -6,7 +6,7 @@
     - include_vars: main.yaml
 
     - name: Login to OpenShift
-      action: command oc login -u {{ openshift_username }} -p {{ openshift_password }} {{ openshift.hostname }}
+      action: command oc login --insecure-skip-tls-verify=true -u {{ openshift_username }} -p {{ openshift_password }} {{ openshift.hostname }}
 
     - name: Create temp directory for storing templates
       command: mktemp -d ./ansible-XXXXXX
