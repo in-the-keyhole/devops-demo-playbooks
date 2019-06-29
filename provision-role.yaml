@@ -1,5 +1,5 @@
 - name: OpenShift - Provision by "role"
-  # hosts: localhost
+  hosts: all
   run_once: true
 
   pre_tasks:
